@@ -1,5 +1,9 @@
 package gui;
 
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Bug extends GameObject {
 
     public final double maxVelocity = 0.1;
@@ -7,9 +11,26 @@ public class Bug extends GameObject {
 
     private double duration = 10;
 
-    public Bug(double x, double y)
-    {
+    private Integer current;
+
+    private Map<Integer, Point[]> levels = new HashMap<Integer, Point[]>() {
+        {
+            put(1, new Point[]{new Point(0, 960), new Point(0, 540)});
+            put(2, new Point[]{new Point(960, 1920), new Point(0, 540)});
+            put(3, new Point[]{new Point(0, 960), new Point(540, 1080)});
+            put(4, new Point[]{new Point(960, 1920), new Point(540, 1080)});
+        }
+    };
+
+    public Bug(double x, double y) {
         super(x, y, "bug_1.png", FieldCell.translateFactor);
+        this.current = 1;
+    }
+
+    public void replaceBug(Integer level) {
+        X_Position = levels.get(level)[0].x;
+        Y_Position = levels.get(level)[1].x;
+        this.current = level;
     }
 
     private double asNormalizedRadians(double angle) {
@@ -42,39 +63,43 @@ public class Bug extends GameObject {
         return asNormalizedRadians(Math.atan2(diffY, diffX));
     }
 
-    private void move(double angularVelocity) {
-        double velocity = applyLimits(maxVelocity, 0, maxVelocity);
-        angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
-        double newX = X_Position + velocity / angularVelocity *
-                (Math.sin(Direction + angularVelocity * duration) -
-                        Math.sin(Direction));
-        if (!Double.isFinite(newX)) {
-            newX = X_Position + velocity * duration * Math.cos(Direction);
+    private void move(double velocity, double angularVelocity) {
+
+        double newX = X_Position + velocity * duration * Math.cos(Direction);
+        double newY = Y_Position + velocity * duration * Math.sin(Direction);
+        if (newX > levels.get(current)[0].x && newX < levels.get(current)[0].y &&
+                newY > levels.get(current)[1].x && newY < levels.get(current)[1].y) {
+            X_Position = newX;
+            Y_Position = newY;
         }
-        double newY = Y_Position - velocity / angularVelocity *
-                (Math.cos(Direction + angularVelocity * duration) -
-                        Math.cos(Direction));
-        if (!Double.isFinite(newY)) {
-            newY = Y_Position + velocity * duration * Math.sin(Direction);
-        }
-        X_Position = newX;
-        Y_Position = newY;
-        Direction = asNormalizedRadians(Direction + angularVelocity * duration);
+        Direction = asNormalizedRadians(Direction + angularVelocity * duration * 4);
     }
 
     public void onModelUpdateEvent(double targetX, double targetY) {
         double dist = distance(targetX, targetY, X_Position, Y_Position);
-        if (dist < 0.5) {
+        if (dist < 0.7) {
             return;
         }
+        double velocity = maxVelocity;
         double angleToTarget = angleTo(X_Position, Y_Position, targetX, targetY);
         double angularVelocity = 0;
-        if (angleToTarget > Direction) {
+        double angleBetweenTargetRobot = asNormalizedRadians(angleToTarget - Direction);
+        if (angleBetweenTargetRobot < Math.PI) {
             angularVelocity = maxAngularVelocity;
+        } else {
+            angularVelocity = -maxAngularVelocity;
         }
-        if (angleToTarget < Direction) {
-            angularVelocity = - maxAngularVelocity;
+
+        if (Math.abs(angleToTarget - Direction) < 0.05) {
+
+            move(velocity, angularVelocity);
+        } else {
+            if (dist < 15) {
+                move(0, angularVelocity);
+            } else {
+                move(velocity / 2, angularVelocity);
+            }
         }
-        move(angularVelocity);
+
     }
 }

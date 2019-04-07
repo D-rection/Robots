@@ -6,7 +6,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+
+import java.awt.*;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,11 +26,12 @@ public class GameField {
 
     private final Canvas canvas;
     private final Pane pane;
-    private final ImageView grass;
+    private final ImageView background;
+
 
     public GameField(Pane pane) {
         this.pane = pane;
-        grass = loadFile("grass.jpg", this.pane.getWidth(), this.pane.getHeight());
+        background = loadFile("levels.jpg", this.pane.getWidth(), this.pane.getHeight());
 
         Target apple = new Target(150, 100);
         this.pane.getChildren().add(apple.Picture);
@@ -34,10 +39,16 @@ public class GameField {
         Bug bug = new Bug(100, 100);
         this.pane.getChildren().add(bug.Picture);
 
-        Mine[] mines = new Mine[]{new Mine(1100, 100), new Mine(500, 500), new Mine(200, 200), new Mine(800, 200),
+        Mine[] mines = new Mine[]{new Mine(1100, 100), new Mine(500, 500), new Mine(800, 200),
                 new Mine(600, 300), new Mine(800, 700), new Mine(100, 700)};
         for(Mine mine: mines){
             this.pane.getChildren().add(mine.Picture);
+        }
+
+        Portal[] portals = new Portal[]{new Portal(200, 200, 2), new Portal(1160, 200, 3),
+                new Portal(200, 740, 4), new Portal(1160, 740, 1) };
+        for(Portal portal: portals){
+            this.pane.getChildren().add(portal.Picture);
         }
 
         Wall[] walls = new Wall[]{new Wall(250, 600), new Wall(300, 600), new Wall(350, 600),
@@ -48,7 +59,7 @@ public class GameField {
             this.pane.getChildren().add(wall.Picture);
         }
 
-        field = new Field(bug, apple, walls, mines);
+        field = new Field(bug, apple, walls, mines, portals);
 
         canvas = new Canvas();
         this.pane.getChildren().add(canvas);
@@ -84,8 +95,8 @@ public class GameField {
     }
 
     private void paint() {
-        grass.setFitHeight(pane.getHeight());
-        grass.setFitWidth(pane.getWidth());
+        background.setFitHeight(pane.getHeight());
+        background.setFitWidth(pane.getWidth());
         canvas.setHeight(pane.getHeight());
         canvas.setWidth(pane.getWidth());
         field.draw();
