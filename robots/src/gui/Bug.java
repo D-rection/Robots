@@ -4,32 +4,24 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static oracle.jrockit.jfr.events.Bits.intValue;
+
 public class Bug extends GameObject {
 
     public final double maxVelocity = 0.1;
     public final double maxAngularVelocity = 0.001;
-
     private double duration = 10;
-
     private Integer current;
 
-    private Map<Integer, Point[]> levels = new HashMap<Integer, Point[]>() {
-        {
-            put(1, new Point[]{new Point(0, 960), new Point(0, 540)});
-            put(2, new Point[]{new Point(960, 1920), new Point(0, 540)});
-            put(3, new Point[]{new Point(0, 960), new Point(540, 1080)});
-            put(4, new Point[]{new Point(960, 1920), new Point(540, 1080)});
-        }
-    };
 
-    public Bug(double x, double y) {
+    Bug(double x, double y) {
         super(x, y, "bug_1.png", FieldCell.translateFactor);
         this.current = 1;
     }
 
     public void replaceBug(Integer level) {
-        X_Position = levels.get(level)[0].x;
-        Y_Position = levels.get(level)[1].x;
+        X_Position = GameField.levels.get(level)[0].x;
+        Y_Position = GameField.levels.get(level)[1].x;
         this.current = level;
     }
 
@@ -67,15 +59,15 @@ public class Bug extends GameObject {
 
         double newX = X_Position + velocity * duration * Math.cos(Direction);
         double newY = Y_Position + velocity * duration * Math.sin(Direction);
-        if (newX > levels.get(current)[0].x && newX < levels.get(current)[0].y &&
-                newY > levels.get(current)[1].x && newY < levels.get(current)[1].y) {
+        if (newX > GameField.levels.get(current)[0].x && newX < GameField.levels.get(current)[0].y &&
+                newY > GameField.levels.get(current)[1].x && newY < GameField.levels.get(current)[1].y) {
             X_Position = newX;
             Y_Position = newY;
         }
         Direction = asNormalizedRadians(Direction + angularVelocity * duration * 4);
     }
 
-    public void onModelUpdateEvent(double targetX, double targetY) {
+    void onModelUpdateEvent(double targetX, double targetY) {
         double dist = distance(targetX, targetY, X_Position, Y_Position);
         if (dist < 0.7) {
             return;
@@ -100,6 +92,5 @@ public class Bug extends GameObject {
                 move(velocity / 2, angularVelocity);
             }
         }
-
     }
 }

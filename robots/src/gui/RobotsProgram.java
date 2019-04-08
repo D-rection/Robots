@@ -4,13 +4,16 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import log.LogWindowSource;
 
+import java.awt.*;
+
 public class RobotsProgram extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         primaryStage.setTitle("Robots");
-        primaryStage.setMaxHeight(1080);
-        primaryStage.setMaxWidth(1920);
+        primaryStage.setHeight(size.height);
+        primaryStage.setWidth(size.width);
         new MainApplicationStage(primaryStage, new LogWindowSource(5));
         primaryStage.show();
     }

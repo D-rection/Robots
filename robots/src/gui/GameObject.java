@@ -11,7 +11,7 @@ public abstract class GameObject {
     public final double Size;
     public ImageView Picture;
 
-    public GameObject(double x, double y, String path, double size)
+    GameObject(double x, double y, String path, double size)
     {
         Size = size;
         loadImage(path, size, size);

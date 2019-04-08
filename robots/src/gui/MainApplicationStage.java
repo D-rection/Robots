@@ -17,7 +17,7 @@ public class MainApplicationStage {
     private String logWindowName = "LogWindow";
 
     public MainApplicationStage(Stage primaryStage,LogWindowSource source) {
-        Pane gameWindow = new GameWindow();
+        Pane gameWindow = new GameWindow(primaryStage.getHeight(), primaryStage.getWidth());
         Pane logWindow = new LogWindow(source);
 
         HashMap<String, Scene> scenes = getScenes(gameWindow, logWindow);
@@ -44,7 +44,8 @@ public class MainApplicationStage {
             }
         });
         primaryStage.setScene(scenes.get(gameWindowName));
-        primaryStage.setFullScreen(true);
+        //primaryStage.setFullScreen(true);
+        primaryStage.setResizable(false);
     }
 
     private HashMap<String, Scene> getScenes(Pane gameWindow, Pane logWindow) {
