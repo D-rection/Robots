@@ -17,7 +17,7 @@ import java.util.TimerTask;
 
 import static oracle.jrockit.jfr.events.Bits.intValue;
 
-class GameField {
+public class GameField {
     private final Timer m_timer = initTimer();
 
     private static Timer initTimer() {
@@ -25,7 +25,7 @@ class GameField {
         return timer;
     }
 
-    private Field field;
+    public Field field;
 
     private final Canvas canvas;
     private final Pane pane;
@@ -51,7 +51,7 @@ class GameField {
     };
 
 
-    GameField(Pane pane) {
+    public GameField(Pane pane) {
         this.pane = pane;
         background = loadFile("levels.png", this.pane.getWidth(), this.pane.getHeight());
 
@@ -113,7 +113,7 @@ class GameField {
             public void run() {
                 paint();
             }
-        }, 0, 20);
+        }, 0, 25);
 
         this.canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override

@@ -6,12 +6,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static oracle.jrockit.jfr.events.Bits.intValue;
+
 public class Field {
     private Set<FieldCell> badCells = new HashSet<>();
     Set<FieldCell> portalCells = new HashSet<>();
 
-    private Bug bug;
-    private Target target;
+    public Bug bug;
+    public Target target;
 
     private Map<Integer, Point> shifts = new HashMap<>();
     private Map<Integer, Integer> oneAfterAnother = new HashMap<Integer, Integer>()
@@ -26,7 +28,7 @@ public class Field {
     private GameField game;
 
 
-    public Field(Bug bug, Target target, Wall[] walls, Mine[] mines,  Portal[] portals, GameField game)
+    Field(Bug bug, Target target, Wall[] walls, Mine[] mines,  Portal[] portals, GameField game)
     {
         this.game = game;
         this.bug = bug;
@@ -42,7 +44,7 @@ public class Field {
         for(Portal portal: portals){
             FieldCell cell = FieldCell.getCell(portal.X_Position, portal.Y_Position);
             portalCells.add(cell);
-            shifts.put(portal.level, new Point((int)portal.X_Position, (int)portal.Y_Position));
+            shifts.put(portal.level, new Point((intValue(portal.X_Position)), intValue(portal.Y_Position)));
         }
     }
 
@@ -59,12 +61,13 @@ public class Field {
 
     private boolean isSmash() { return badCells.contains(FieldCell.getCell(bug.X_Position, bug.Y_Position)); }
 
-    private boolean isPortal()
+    boolean isPortal()
     {
         return portalCells.contains(FieldCell.getCell(bug.X_Position, bug.Y_Position));
     }
 
-    void onModelUpdateEvent(){
+    public void onModelUpdateEvent(){
+
         if (game.currentField != game.destField){
             target.X_Position = shifts.get(game.currentField).x;
             target.Y_Position = shifts.get(game.currentField).y;
@@ -83,14 +86,14 @@ public class Field {
             System.exit(0);
         }
         if (isPortal()) {
-            System.out.println("Yes");
+            //System.out.println("Yes");
 
             for (Integer el : shifts.keySet()) {
                 if (FieldCell.getCell(shifts.get(el).x, shifts.get(el).y).equals(FieldCell.getCell(target.X_Position, target.Y_Position))) {
                     bug.replaceBug(oneAfterAnother.get(el));
+                    game.currentField = oneAfterAnother.get(game.currentField);
                 }
             }
-            game.currentField = oneAfterAnother.get(game.currentField);
         }
     }
 

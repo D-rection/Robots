@@ -12,6 +12,8 @@ class GameWindow extends Pane {
     {
         GameWindow.height = height;
         GameWindow.width = width;
+        this.setHeight(GameWindow.height);
+        this.setWidth(GameWindow.width);
         gameVisualizer = new GameField(this);
     }
 }

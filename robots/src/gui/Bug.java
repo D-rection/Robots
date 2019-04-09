@@ -11,10 +11,10 @@ public class Bug extends GameObject {
     public final double maxVelocity = 0.1;
     public final double maxAngularVelocity = 0.001;
     private double duration = 10;
-    private Integer current;
+    Integer current;
 
 
-    Bug(double x, double y) {
+    public Bug(double x, double y) {
         super(x, y, "bug_1.png", FieldCell.translateFactor);
         this.current = 1;
     }

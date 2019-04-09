@@ -18,6 +18,7 @@ public class MainApplicationStage {
 
     public MainApplicationStage(Stage primaryStage,LogWindowSource source) {
         Pane gameWindow = new GameWindow(primaryStage.getHeight(), primaryStage.getWidth());
+
         Pane logWindow = new LogWindow(source);
 
         HashMap<String, Scene> scenes = getScenes(gameWindow, logWindow);
